@@ -1,0 +1,144 @@
+import java.util.*;
+import java.io.*;
+
+public class Graph {
+  private int V;
+  private int E;
+  private ArrayList<ArrayList<Edge>> adjList;
+
+  /**
+   * Constructor to create a graph from a file.
+   * 
+   * @param filePath Path to the graph file.
+   */
+  Graph(String filePath) {
+    try {
+      File file = new File(filePath);
+      Scanner scanner = new Scanner(file);
+
+      String[] firstLine = scanner.nextLine().trim().split(" ");
+      V = Integer.parseInt(firstLine[0]);
+      E = Integer.parseInt(firstLine[1]);
+
+      adjList = new ArrayList<>(V);
+      for (int i = 0; i < V; i++) {
+        adjList.add(new ArrayList<>());
+      }
+
+      for (int i = 0; i < E; i++) {
+        String[] edgeLine = scanner.nextLine().trim().split(" ");
+        int source = Integer.parseInt(edgeLine[0]);
+        int destination = Integer.parseInt(edgeLine[1]);
+        int weight = Integer.parseInt(edgeLine[2]);
+
+        Edge edge = new Edge(destination, weight);
+        adjList.get(source).add(edge);
+      }
+
+      scanner.close();
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException("File not found: " + filePath, e);
+    } catch (Exception e) {
+      throw new RuntimeException("Error reading the graph file: " + filePath, e);
+    }
+  }
+
+  /**
+   * Function to get the neighbors of a vertex.
+   * 
+   * @param vertex The vertex whose neighbors are to be retrieved.
+   * @return List of edges representing the neighbors of the vertex.
+   */
+  public ArrayList<Edge> getNeighbors(int vertex) {
+    return adjList.get(vertex);
+  }
+
+  /**
+   * Function to get the number of nodes in the graph.
+   * 
+   * @param V Number of vertices.
+   */
+  public int size() {
+    return V;
+  }
+
+  /**
+   * Class represinting node to be used in the priority queue.
+   * 
+   * It implements Comparable interface to allow comparison based on distance.
+   */
+  class Node implements Comparable<Node> {
+    int vertex;
+    int distance;
+
+    Node(int vertex, int distance) {
+      this.vertex = vertex;
+      this.distance = distance;
+    }
+
+    @Override
+    public int compareTo(Node other) {
+      return Integer.compare(this.distance, other.distance);
+    }
+  }
+
+  /**
+   * Implementation of Dijkestra Algorithm.
+   * 
+   * @param vertex  The vertex whose cost is to be retrieved.
+   * @param costs   The list of costs to each vertex.
+   * @param parents The list of parent vertices for each vertex.
+   */
+  public void Dijkstra(int src, ArrayList<Integer> costs, ArrayList<Integer> parents) {
+    for (int i = 0; i < costs.size(); i++) {
+      if (i != src) {
+        costs.set(i, Integer.MAX_VALUE);
+        parents.set(i, -1);
+      }
+    }
+    costs.set(src, 0);
+    PriorityQueue<Node> pq = new PriorityQueue<>();
+    pq.add(new Node(src, 0));
+    while (!pq.isEmpty()) {
+      Node currNode = pq.poll();
+      if (currNode.distance > costs.get(currNode.vertex)) {
+        continue;
+      }
+      ArrayList<Edge> currNodeNeighbours = getNeighbors(currNode.vertex);
+      for (Edge edge : currNodeNeighbours) {
+        int dist = edge.getDist();
+        int weight = edge.getWeight();
+        int newDist = weight + currNode.distance;
+        if (newDist < costs.get(dist)) {
+          costs.set(dist, newDist);
+          parents.set(dist, currNode.vertex);
+          pq.add(new Node(dist, newDist));
+        }
+      }
+    }
+  }
+
+  public void printGraph() {
+    System.out.println("Graph Representation (Adjacency List):");
+    System.out.println("Vertices: " + V + ", Edges: " + E);
+
+    for (int i = 0; i < V; i++) {
+      System.out.print("Vertex " + i + " -> ");
+      ArrayList<Edge> edges = adjList.get(i);
+
+      if (edges.isEmpty()) {
+        System.out.println("No outgoing edges");
+      } else {
+        for (int j = 0; j < edges.size(); j++) {
+          Edge edge = edges.get(j);
+          System.out.print("[" + edge.getDist() + ", weight=" + edge.getWeight() + "]");
+
+          if (j < edges.size() - 1) {
+            System.out.print(" | ");
+          }
+        }
+        System.out.println();
+      }
+    }
+  }
+}
