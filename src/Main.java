@@ -185,7 +185,7 @@ public class Main {
 
       switch (queryChoice) {
         case 1:
-                
+
           if (allPairsCosts.get(source).get(target) == Integer.MAX_VALUE) {
             System.out.println(RED + "No path exists from " + source + " to " + target + RESET);
           } else {
