@@ -19,8 +19,8 @@ public class EdgeList {
     private void readGraphFromFile(String filePath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String[] firstLint = reader.readLine().trim().split("\\s+");
-            int v = Integer.parseInt(firstLint[0]);
-            int e = Integer.parseInt(firstLint[1]);
+            v = Integer.parseInt(firstLint[0]);
+            e = Integer.parseInt(firstLint[1]);
 
             this.edges = new ArrayList<>();
             for (int i = 0; i < e; i++) {
