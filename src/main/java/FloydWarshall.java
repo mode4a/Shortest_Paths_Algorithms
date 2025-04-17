@@ -1,5 +1,3 @@
-package org.example;
-
 import java.util.ArrayList;
 
 import static java.lang.Integer.min;
