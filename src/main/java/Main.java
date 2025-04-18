@@ -263,7 +263,7 @@ public class Main {
                 return;
         }
 
-        if (hasNegativeCycle) {
+        if (!hasNegativeCycle) {
             System.out.println(BOLD + RED + "\nThe graph contains a negative cycle." + RESET);
         } else {
             System.out.println(BOLD + GREEN + "\nThe graph does not contain any negative cycles." + RESET);

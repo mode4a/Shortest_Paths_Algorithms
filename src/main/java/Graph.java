@@ -157,10 +157,10 @@ public class Graph {
       int to = edge.destination();
       int weight = edge.weight();
       if (costs.get(from) != Integer.MAX_VALUE && costs.get(from) + weight < costs.get(to)) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   /**
