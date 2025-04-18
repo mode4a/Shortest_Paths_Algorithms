@@ -5,6 +5,9 @@ public class Graph {
   private int V;
   private int E;
   private ArrayList<ArrayList<Edge>> adjList;
+  private ArrayList<ArrayList<Integer>> adjMatrix = new ArrayList<>();
+  private List<CompleteEdge> edges = new ArrayList<>();
+  final static int infinity = 10000000;
 
   /**
    * Constructor to create a graph from a file.
@@ -33,8 +36,9 @@ public class Graph {
 
         Edge edge = new Edge(destination, weight);
         adjList.get(source).add(edge);
+        edges.add(new CompleteEdge(source, destination, weight));
       }
-
+      listToMatrix();
       scanner.close();
     } catch (FileNotFoundException e) {
       throw new RuntimeException("File not found: " + filePath, e);
@@ -49,7 +53,7 @@ public class Graph {
    * @param vertex The vertex whose neighbors are to be retrieved.
    * @return List of edges representing the neighbors of the vertex.
    */
-  public ArrayList<Edge> getNeighbors(int vertex) {
+  private ArrayList<Edge> getNeighbors(int vertex) {
     return adjList.get(vertex);
   }
 
@@ -91,10 +95,8 @@ public class Graph {
    */
   public void Dijkstra(int src, ArrayList<Integer> costs, ArrayList<Integer> parents) {
     for (int i = 0; i < costs.size(); i++) {
-      if (i != src) {
-        costs.set(i, Integer.MAX_VALUE);
-        parents.set(i, -1);
-      }
+      costs.set(i, Integer.MAX_VALUE);
+      parents.set(i, -1);
     }
     costs.set(src, 0);
     PriorityQueue<Node> pq = new PriorityQueue<>();
@@ -118,6 +120,63 @@ public class Graph {
     }
   }
 
+  /**
+   * Implementation of Bellman-Ford Algorithm.
+   * 
+   * @param src     The source vertex.
+   * @param costs   The list of costs to each vertex.
+   * @param parents The list of parent vertices for each vertex.
+   * 
+   * @return true if graph has negative cycle otherwise return false.
+   */
+
+  public boolean bellmanFord(int src, ArrayList<Integer> costs, ArrayList<Integer> parents) {
+    if (src < 0 || src >= V)
+      throw new IllegalArgumentException("Source vertex must be between 0 and " + (V - 1));
+
+    for (int i = 0; i < costs.size(); i++) {
+      costs.set(i, Integer.MAX_VALUE);
+      parents.set(i, -1);
+    }
+    costs.set(src, 0);
+
+    for (int i = 0; i < V - 1; i++) {
+      for (CompleteEdge edge : edges) {
+        int from = edge.source();
+        int to = edge.destination();
+        int weight = edge.weight();
+        if (costs.get(from) != Integer.MAX_VALUE && costs.get(from) + weight < costs.get(to)) {
+          costs.set(to, costs.get(from) + weight);
+          parents.set(to, from);
+        }
+      }
+    }
+
+    for (CompleteEdge edge : edges) {
+      int from = edge.source();
+      int to = edge.destination();
+      int weight = edge.weight();
+      if (costs.get(from) != Integer.MAX_VALUE && costs.get(from) + weight < costs.get(to)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Implementation of Dijkestra Algorithm.
+   * 
+   * @param costMatrix    matrix of costs form and to every node.
+   * @param parentsMatrix matrix of parent of every node.
+   * 
+   * @return true if graph has negative cycle otherwise return false.
+   */
+  public boolean floydWarshall(ArrayList<ArrayList<Integer>> costMatrix,
+      ArrayList<ArrayList<Integer>> parentsMAtrix) {
+
+    return true;
+  }
+
   public void printGraph() {
     System.out.println("Graph Representation (Adjacency List):");
     System.out.println("Vertices: " + V + ", Edges: " + E);
@@ -138,6 +197,20 @@ public class Graph {
           }
         }
         System.out.println();
+      }
+    }
+  }
+
+  private void listToMatrix() {
+    for (int i = 0; i < V; ++i) {
+      adjMatrix.add(new ArrayList<>());
+      for (int j = 0; j < V; ++j) {
+        adjMatrix.get(i).add(infinity);
+      }
+    }
+    for (int i = 0; i < V; ++i) {
+      for (Edge e : adjList.get(i)) {
+        adjMatrix.get(i).set(e.getDist(), e.getWeight());
       }
     }
   }

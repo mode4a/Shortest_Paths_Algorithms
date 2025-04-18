@@ -1,7 +1,7 @@
 // Source code is decompiled from a .class file using FernFlower decompiler.
 public class Edge {
-   int dist;
-   int weight;
+   private int dist;
+   private int weight;
 
    Edge(int var1, int var2) {
       this.dist = var1;

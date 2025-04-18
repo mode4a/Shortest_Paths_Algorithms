@@ -2,7 +2,6 @@ import java.util.ArrayList;
 
 import static java.lang.Integer.min;
 
-
 public class FloydWarshall {
 
     final static int infinity = 10000000;
@@ -10,41 +9,40 @@ public class FloydWarshall {
     ArrayList<ArrayList<ArrayList<Integer>>> matrix;
     int v;
 
-    ArrayList<ArrayList<Integer>> listToMatrix(ArrayList<ArrayList<Edge>> adjList){
+    ArrayList<ArrayList<Integer>> listToMatrix(ArrayList<ArrayList<Edge>> adjList) {
         ArrayList<ArrayList<Integer>> adjMatrix = new ArrayList<>();
         int v = adjList.size();
-        for(int i = 0; i < v; ++i){
+        for (int i = 0; i < v; ++i) {
             adjMatrix.add(new ArrayList<>());
-            for(int j = 0; j < v; ++j){
+            for (int j = 0; j < v; ++j) {
                 adjMatrix.get(i).add(infinity);
             }
         }
-        for(int i = 0; i < v; ++i){
-            for(Edge e : adjList.get(i)){
-                adjMatrix.get(i).set(e.dist, e.weight);
+        for (int i = 0; i < v; ++i) {
+            for (Edge e : adjList.get(i)) {
+                adjMatrix.get(i).set(e.getDist(), e.getWeight());
             }
         }
         return adjMatrix;
     }
 
-
-    FloydWarshall(ArrayList<ArrayList<Edge>> adjList){
+    FloydWarshall(ArrayList<ArrayList<Edge>> adjList) {
 
         ArrayList<ArrayList<Integer>> adjMatrix = listToMatrix(adjList);
         v = adjMatrix.size();
         matrix = new ArrayList<>();
-        for(int k = 0; k < 2; ++k){
+        for (int k = 0; k < 2; ++k) {
             matrix.add(new ArrayList<>());
-            for(int i = 0; i < v; ++i){
+            for (int i = 0; i < v; ++i) {
                 matrix.get(k).add(new ArrayList<>());
-                for(int j = 0; j < v; ++j){
-                    if(k == 0) {
-                        if(i != j) {
+                for (int j = 0; j < v; ++j) {
+                    if (k == 0) {
+                        if (i != j) {
                             matrix.get(k).get(i).add(adjMatrix.get(i).get(j));
-                        } else{
+                        } else {
                             matrix.get(k).get(i).add(0);
                         }
-                    } else{
+                    } else {
                         matrix.get(k).get(i).add(0);
                     }
                 }
@@ -52,11 +50,11 @@ public class FloydWarshall {
         }
     }
 
-    ArrayList<ArrayList<Integer>> floydWarshall(){
+    ArrayList<ArrayList<Integer>> floydWarshall() {
         int last = 0;
-        for(int k = 1; k <= v; ++k){
-            for(int j = 0; j < v; ++j){
-                for(int i = 0; i < v; ++i){
+        for (int k = 1; k <= v; ++k) {
+            for (int j = 0; j < v; ++j) {
+                for (int i = 0; i < v; ++i) {
                     int relax = matrix.get(last).get(i).get(k - 1) + matrix.get(last).get(k - 1).get(j);
                     int withoutK = matrix.get(last).get(i).get(j);
                     matrix.get(1 - last).get(i).set(j, min(relax, withoutK));
