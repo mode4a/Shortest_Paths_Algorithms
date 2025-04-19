@@ -173,8 +173,8 @@ public class Graph {
    */
   public boolean floydWarshall(ArrayList<ArrayList<Integer>> costMatrix,
       ArrayList<ArrayList<Integer>> parentsMAtrix) {
-
-    return true;
+      FloydWarshall f = new FloydWarshall(costMatrix, parentsMAtrix);
+      return f.floydWarshall();
   }
 
   public void printGraph() {
