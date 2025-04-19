@@ -35,13 +35,15 @@ public class FloydWarshall {
     boolean floydWarshall() {
 
         for (int k = 0; k < v; ++k) {
-            for (int j = 0; j < v; ++j) {
-                for (int i = 0; i < v; ++i) {
+            for (int i = 0; i < v; ++i) {
+                for (int j = 0; j < v; ++j) {
                     int relax = matrix.get(i).get(k) + matrix.get(k).get(j);
                     int withoutK = matrix.get(i).get(j);
                     if(relax < withoutK) {
                         matrix.get(i).set(j, relax);
                         parent.get(i).set(j, parent.get(k).get(j));
+                    } else {
+                        parent.get(i).set(j, i);
                     }
                 }
             }
